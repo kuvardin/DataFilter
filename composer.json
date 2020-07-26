@@ -1,0 +1,12 @@
+{
+    "name": "kuvardin/data-filter",
+    "description": "Simple PHP data filter",
+    "type": "library",
+    "authors": [
+        {
+            "name": "kuvardin",
+            "email": "maxim@kuvard.in"
+        }
+    ],
+    "require": {}
+}
