@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Kuvardin;
+namespace Kuvardin\DataFilter;
 
 use Error;
 use Throwable;
@@ -11,7 +11,7 @@ use DateTime;
 /**
  * Class DataFilter
  *
- * @package Kuvardin
+ * @package Kuvardin\DataFilter
  * @author Maxim Kuvardin <maxim@kuvard.in>
  */
 class DataFilter
@@ -293,6 +293,25 @@ class DataFilter
             return new DateTime($var);
         } catch (Throwable $e) {
             throw new Error($e->getMessage(), $e->getCode(), $e->getPrevious());
+        }
+    }
+
+    /**
+     * @param array $data
+     * @param array $known_keys
+     */
+    public function searchUnknownFields(array &$data, array $known_keys): void
+    {
+        $exception = null;
+        $keys = array_keys($data);
+        $unknown_keys = array_diff($keys, $known_keys);
+        if ($unknown_keys !== []) {
+            foreach ($unknown_keys as $unknown_key) {
+                $type = gettype($data[$unknown_key]);
+                $message = "Unknown field $unknown_key typed $type with value " . print_r($data[$unknown_key], true);
+                $exception = new Error($message, 0, $exception);
+            }
+            throw $exception;
         }
     }
 }
