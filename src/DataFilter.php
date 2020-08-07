@@ -279,24 +279,6 @@ class DataFilter
     }
 
     /**
-     * @param $var
-     * @return DateTime|null
-     * @throws Error
-     */
-    public static function getDateTime($var): ?DateTime
-    {
-        if ($var === null || $var === '' || $var === '0' || $var === 0) {
-            return null;
-        }
-
-        try {
-            return new DateTime($var);
-        } catch (Throwable $e) {
-            throw new Error($e->getMessage(), $e->getCode(), $e->getPrevious());
-        }
-    }
-
-    /**
      * @param array $data
      * @param array $known_keys
      */
@@ -312,6 +294,24 @@ class DataFilter
                 $exception = new Error($message, 0, $exception);
             }
             throw $exception;
+        }
+    }
+
+    /**
+     * @param $var
+     * @return DateTime|null
+     * @throws Error
+     */
+    public static function getDateTime($var): ?DateTime
+    {
+        if ($var === null || $var === '' || $var === '0' || $var === 0) {
+            return null;
+        }
+
+        try {
+            return new DateTime($var);
+        } catch (Throwable $e) {
+            throw new Error($e->getMessage(), $e->getCode(), $e->getPrevious());
         }
     }
 }
