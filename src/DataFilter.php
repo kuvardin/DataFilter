@@ -300,7 +300,7 @@ class DataFilter
      * @param array $data
      * @param array $known_keys
      */
-    public function searchUnknownFields(array &$data, array $known_keys): void
+    public static function searchUnknownFields(array &$data, array $known_keys): void
     {
         $exception = null;
         $keys = array_keys($data);
