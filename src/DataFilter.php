@@ -26,7 +26,6 @@ class DataFilter
     /**
      * @param $var
      * @return int
-     * @throws Error
      */
     public static function requireInt($var): int
     {
@@ -42,14 +41,13 @@ class DataFilter
      * @param $var
      * @param bool $zero_to_null
      * @return int|null
-     * @throws Error
      */
     public static function getInt($var, bool $zero_to_null = false): ?int
     {
         $result = null;
         if (is_int($var)) {
             $result = $var;
-        } elseif (is_string($var) && preg_match('/^\d+$/', $var)) {
+        } elseif (is_string($var) && preg_match('/^(-|\+)?\d+$/', $var)) {
             $result = (int)$var;
         } else {
             $type = gettype($var);
@@ -66,7 +64,6 @@ class DataFilter
     /**
      * @param $var
      * @return int|null
-     * @throws Error
      */
     public static function requireIntZeroToNull($var): ?int
     {
@@ -83,7 +80,6 @@ class DataFilter
      * @param $true_value
      * @param $false_value
      * @return bool|null
-     * @throws Error
      */
     public static function getBoolByValues($var, $true_value, $false_value): ?bool
     {
@@ -103,7 +99,6 @@ class DataFilter
      * @param $true_value
      * @param $false_value
      * @return bool
-     * @throws Error
      */
     public static function requireBoolByValues($var, $true_value, $false_value): bool
     {
@@ -117,7 +112,6 @@ class DataFilter
     /**
      * @param $var
      * @return bool|null
-     * @throws Error
      */
     public static function getBool($var): ?bool
     {
@@ -136,7 +130,6 @@ class DataFilter
     /**
      * @param $var
      * @return bool
-     * @throws Error
      */
     public static function requireBool($var): bool
     {
@@ -152,7 +145,6 @@ class DataFilter
      * @param $var
      * @param bool $filter
      * @return string|null
-     * @throws Error
      */
     public static function getString($var, bool $filter = false): ?string
     {
@@ -181,7 +173,6 @@ class DataFilter
      * @param $var
      * @param bool $filter
      * @return string|null
-     * @throws Error
      */
     public static function getStringEmptyToNull($var, bool $filter = false): ?string
     {
@@ -205,7 +196,6 @@ class DataFilter
      * @param $var
      * @param bool $filter
      * @return string
-     * @throws Error
      */
     public static function requireString($var, bool $filter = false): string
     {
@@ -221,7 +211,6 @@ class DataFilter
      * @param $var
      * @param bool $filter
      * @return string
-     * @throws Error
      */
     public static function requireNotEmptyString($var, bool $filter = false): string
     {
@@ -241,7 +230,6 @@ class DataFilter
      * @param $var
      * @param bool $filter
      * @return string|null
-     * @throws Error
      */
     public static function requireStringEmptyToNull($var, bool $filter = false): ?string
     {
@@ -300,7 +288,6 @@ class DataFilter
     /**
      * @param $var
      * @return DateTime|null
-     * @throws Error
      */
     public static function getDateTime($var): ?DateTime
     {
