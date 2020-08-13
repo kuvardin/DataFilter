@@ -314,4 +314,36 @@ class DataFilter
             throw new Error($e->getMessage(), $e->getCode(), $e->getPrevious());
         }
     }
+
+    /**
+     * @param $var
+     * @return float|null
+     */
+    public static function getFloat($var): ?float
+    {
+        if ($var === null) {
+            return null;
+        }
+
+        if (is_int($var) || is_float($var) || (is_string($var) && is_numeric($var))) {
+            return (float)$var;
+        }
+
+        $type = gettype($var);
+        throw new Error("Unexpected var type: $type (expected float or string)");
+    }
+
+    /**
+     * @param $var
+     * @return float
+     */
+    public static function requireFloat($var): float
+    {
+        if (is_int($var) || is_float($var) || (is_string($var) && is_numeric($var))) {
+            return (float)$var;
+        }
+
+        $type = gettype($var);
+        throw new Error("Unexpected var type: $type (expected float or string)");
+    }
 }
