@@ -8,7 +8,9 @@
             "email": "maxim@kuvard.in"
         }
     ],
-    "require": {},
+    "require": {
+      "ext-mbstring": "*"
+    },
     "autoload": {
         "psr-4": {
             "Kuvardin\\DataFilter\\": "src"

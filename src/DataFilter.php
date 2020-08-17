@@ -7,6 +7,7 @@ namespace Kuvardin\DataFilter;
 use Error;
 use Throwable;
 use DateTime;
+use function BA\scan_fields;
 
 /**
  * Class DataFilter
@@ -332,5 +333,150 @@ class DataFilter
 
         $type = gettype($var);
         throw new Error("Unexpected var type: $type (expected float or string)");
+    }
+
+
+    /**
+     * @param array $fields
+     * @param array $base
+     * @return array
+     */
+    public static function scanFields(array $fields, array $base): array
+    {
+        foreach ($fields as $field_key => $field_value) {
+            $field_type = gettype($field_value);
+            if ($field_value === 0) {
+                $field_type = 'zero';
+            } elseif ($field_type === '0') {
+                $field_type = 'zero_in_string';
+                $field_value = 0;
+            } elseif (is_string($field_value)) {
+                if (preg_match('|^\d+$|', $field_value)) {
+                    $field_type = 'integer_in_string';
+                    if ((string)((int)$field_value) === $field_value) {
+                        $field_value = (int)$field_value;
+                    }
+                } elseif (preg_match('|^(\d+)\.(\d+)$|', $field_value)) {
+                    $field_type = 'double_in_string';
+                } elseif ($field_value === '') {
+                    $field_type = 'empty_string';
+                }
+            }
+
+            if (!isset($base[$field_key]['types'][$field_type])) {
+                $base[$field_key]['types'][$field_type] = 1;
+            } else {
+                $base[$field_key]['types'][$field_type]++;
+            }
+
+            if (is_array($field_value)) {
+                $base[$field_key]['inners'] = self::scanFields($field_value, $base[$field_key]['inners'] ?? []);
+            } else {
+                if (!array_key_exists($field_type, $base[$field_key])) {
+                    $base[$field_key][$field_type] = [];
+                }
+
+                switch ($field_type) {
+                    case 'integer':
+                    case 'double':
+                    case 'integer_in_string':
+                    case 'double_in_string':
+                        if (!isset($base[$field_key][$field_type]['max_value'])) {
+                            $base[$field_key][$field_type]['max_value'] = $field_value;
+                        } elseif ($base[$field_key][$field_type]['max_value'] < $field_value) {
+                            $base[$field_key][$field_type]['max_value'] = $field_value;
+                        }
+
+                        if (!isset($base[$field_key][$field_type]['min_value'])) {
+                            $base[$field_key][$field_type]['min_value'] = $field_value;
+                        } else if ($base[$field_key][$field_type]['min_value'] > $field_value) {
+                            $base[$field_key][$field_type]['min_value'] = $field_value;
+                        }
+                        break;
+
+                    case 'string':
+                        $string_len = mb_strlen($field_value);
+
+                        if (!isset($base[$field_key][$field_type]['max_length'])) {
+                            $base[$field_key][$field_type]['max_length'] = $string_len;
+                        } else if ($base[$field_key][$field_type]['max_length'] < $string_len) {
+                            $base[$field_key][$field_type]['max_length'] = $string_len;
+                        }
+
+                        if (!isset($base[$field_key][$field_type]['min_length'])) {
+                            $base[$field_key][$field_type]['min_length'] = $string_len;
+                        } elseif ($base[$field_key][$field_type]['min_length'] > $string_len) {
+                            $base[$field_key][$field_type]['min_length'] = $string_len;
+                        }
+                        break;
+                }
+
+                if (!isset($base[$field_key]['examples'][$field_type])) {
+                    $base[$field_key]['examples'][$field_type] = [];
+                }
+
+                if ($field_value === null) {
+                    $field_value_name = 'NULL';
+                } elseif (is_bool($field_value)) {
+                    $field_value_name = $field_value ? 'TRUE' : 'FALSE';
+                } elseif (is_float($field_value)) {
+                    $field_value_name = (string)$field_value;
+                } elseif (!is_string($field_value) && !is_int($field_value)) {
+                    $field_value_name = gettype($field_value) . ': ' . $field_value;
+                } else {
+                    $field_value_name = $field_value;
+                }
+
+                if (!array_key_exists($field_value_name, $base[$field_key]['examples'][$field_type])) {
+                    if (count($base[$field_key]['examples'][$field_type]) < 10) {
+                        $base[$field_key]['examples'][$field_type][$field_value_name] = 1;
+                    }
+                } else {
+                    $base[$field_key]['examples'][$field_type][$field_value_name]++;
+                }
+            }
+        }
+
+        foreach ($base as $key => $value) {
+            if (is_string($key)) {
+                $key_parts = explode('.', $key);
+                if (count($key_parts) > 1) {
+                    array_pop($key_parts);
+                    if ($key_parts !== []) {
+                        $parent = implode('.', $key_parts);
+                        $base[$key]['parent'] = $parent;
+                        $another_not_exists = true;
+
+                        foreach ($base as $field_key => $field_value) {
+                            if ($field_key !== $key &&
+                                ($field_key === $parent || mb_strpos($field_key, trim($parent, '.') . '.') === 0)) {
+                                $another_not_exists = false;
+                                break;
+                            }
+                        }
+
+                        if (!array_key_exists($key, $fields)) {
+                            $field_type = $another_not_exists
+                                ? 'not_exists_if_another_not_exists'
+                                : 'not_exists_with_another_exists';
+                            if (!in_array($field_type, $base[$key]['types'], true)) {
+                                $base[$key]['types'][] = $field_type;
+                            }
+                        }
+
+                        continue;
+                    }
+                }
+            }
+
+            if (!array_key_exists($key, $fields)) {
+                $field_type = 'not_exists';
+                if (!in_array($field_type, $base[$key]['types'], true)) {
+                    $base[$key]['types'][] = $field_type;
+                }
+            }
+        }
+
+        return $base;
     }
 }
