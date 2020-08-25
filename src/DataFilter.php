@@ -351,10 +351,10 @@ class DataFilter
             $field_type = gettype($field_value);
             if ($field_value === 0) {
                 $field_type = 'zero';
-            } elseif ($field_type === '0') {
+            } elseif ($field_value === '0') {
                 $field_type = 'zero_in_string';
                 $field_value = 0;
-            } elseif ($field_type === []) {
+            } elseif ($field_value === []) {
                 $field_type = 'empty_array';
             } elseif (is_string($field_value)) {
                 if (preg_match('|^\d+$|', $field_value)) {
@@ -405,7 +405,7 @@ class DataFilter
 
                         if (!isset($base[$field_key][$field_type]['max_length'])) {
                             $base[$field_key][$field_type]['max_length'] = $string_len;
-                        } else if ($base[$field_key][$field_type]['max_length'] < $string_len) {
+                        } elseif ($base[$field_key][$field_type]['max_length'] < $string_len) {
                             $base[$field_key][$field_type]['max_length'] = $string_len;
                         }
 
