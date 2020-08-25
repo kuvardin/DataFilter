@@ -353,7 +353,6 @@ class DataFilter
                 $field_type = 'zero';
             } elseif ($field_value === '0') {
                 $field_type = 'zero_in_string';
-                $field_value = 0;
             } elseif ($field_value === []) {
                 $field_type = 'empty_array';
             } elseif (is_string($field_value)) {
@@ -478,7 +477,11 @@ class DataFilter
             if (!array_key_exists($key, $fields)) {
                 $field_type = 'not_exists';
                 if (!in_array($field_type, $base[$key]['types'], true)) {
-                    $base[$key]['types'][] = $field_type;
+                    if (!isset($base[$key]['types']['not_exists'])) {
+                        $base[$key]['types']['not_exists'] = 1;
+                    } else {
+                        $base[$key]['types']['not_exists']++;
+                    }
                 }
             }
         }
