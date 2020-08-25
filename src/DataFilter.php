@@ -45,6 +45,10 @@ class DataFilter
      */
     public static function getInt($var, bool $zero_to_null = false): ?int
     {
+        if ($var === null) {
+            return null;
+        }
+
         $result = null;
         if (is_int($var)) {
             $result = $var;
@@ -350,6 +354,8 @@ class DataFilter
             } elseif ($field_type === '0') {
                 $field_type = 'zero_in_string';
                 $field_value = 0;
+            } elseif ($field_type === []) {
+                $field_type = 'empty_array';
             } elseif (is_string($field_value)) {
                 if (preg_match('|^\d+$|', $field_value)) {
                     $field_type = 'integer_in_string';
