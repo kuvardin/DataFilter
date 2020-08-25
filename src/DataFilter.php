@@ -476,11 +476,11 @@ class DataFilter
 
             if (!array_key_exists($key, $fields)) {
                 $field_type = 'not_exists';
-                if (!in_array($field_type, $base[$key]['types'], true)) {
-                    if (!isset($base[$key]['types']['not_exists'])) {
-                        $base[$key]['types']['not_exists'] = 1;
+                if (!array_key_exists($field_type, $base[$key]['types'])) {
+                    if (!isset($base[$key]['types'][$field_type])) {
+                        $base[$key]['types'][$field_type] = 1;
                     } else {
-                        $base[$key]['types']['not_exists']++;
+                        $base[$key]['types'][$field_type]++;
                     }
                 }
             }
