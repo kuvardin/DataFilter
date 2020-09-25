@@ -7,7 +7,6 @@ namespace Kuvardin\DataFilter;
 use Error;
 use Throwable;
 use DateTime;
-use function BA\scan_fields;
 
 /**
  * Class DataFilter
@@ -343,11 +342,16 @@ class DataFilter
     /**
      * @param array $fields
      * @param array $base
+     * @param bool $compare_dissociatives
      * @return array
      */
-    public static function scanFields(array $fields, array $base): array
+    public static function scanFields(array $fields, array $base, bool $compare_dissociatives = false): array
     {
         foreach ($fields as $field_key => $field_value) {
+            if (is_int($field_key) && $compare_dissociatives) {
+                $field_key = 0;
+            }
+
             $field_type = gettype($field_value);
             if ($field_value === 0) {
                 $field_type = 'zero';
