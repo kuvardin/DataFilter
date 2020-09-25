@@ -379,7 +379,8 @@ class DataFilter
             }
 
             if (is_array($field_value)) {
-                $base[$field_key]['inners'] = self::scanFields($field_value, $base[$field_key]['inners'] ?? []);
+                $base[$field_key]['inners'] = self::scanFields($field_value, $base[$field_key]['inners'] ?? [],
+                    $compare_dissociatives);
             } else {
                 if (!array_key_exists($field_type, $base[$field_key])) {
                     $base[$field_key][$field_type] = [];
