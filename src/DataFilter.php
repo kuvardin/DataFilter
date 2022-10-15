@@ -7,6 +7,7 @@ namespace Kuvardin\DataFilter;
 use Error;
 use Throwable;
 use DateTime;
+use DateTimeZone;
 
 /**
  * Class DataFilter
@@ -250,17 +251,18 @@ class DataFilter
 
     /**
      * @param $var
+     * @param DateTimeZone|null $timezone
      * @return DateTime
      */
-    public static function requireDateTime($var): DateTime
+    public static function requireDateTime($var, DateTimeZone $timezone = null): DateTime
     {
         try {
             if (is_string($var)) {
-                return new DateTime($var);
+                return new DateTime($var, $timezone);
             }
 
             if (is_int($var)) {
-                return new DateTime('@' . $var);
+                return new DateTime('@' . $var, $timezone);
             }
         } catch (Throwable $e) {
             throw new Error($e->getMessage(), $e->getCode(), $e->getPrevious());
@@ -291,16 +293,17 @@ class DataFilter
 
     /**
      * @param $var
+     * @param DateTimeZone|null $timezone
      * @return DateTime|null
      */
-    public static function getDateTime($var): ?DateTime
+    public static function getDateTime($var, DateTimeZone $timezone = null): ?DateTime
     {
         if ($var === null || $var === '' || $var === '0' || $var === 0) {
             return null;
         }
 
         try {
-            return new DateTime($var);
+            return self::requireDateTime($var, $timezone);
         } catch (Throwable $e) {
             throw new Error($e->getMessage(), $e->getCode(), $e->getPrevious());
         }
