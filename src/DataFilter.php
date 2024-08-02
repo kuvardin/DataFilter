@@ -281,7 +281,7 @@ class DataFilter
             return null;
         }
 
-        return self::requireDateTime($var, $timezone, $format);
+        return self::requireDateTime($var, $format, $timezone);
     }
 
     /**
