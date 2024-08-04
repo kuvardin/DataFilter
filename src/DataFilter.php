@@ -99,6 +99,10 @@ class DataFilter
         mixed $false_value,
     ): ?bool
     {
+        if (is_bool($var)) {
+            return $var;
+        }
+
         if ($var !== $true_value && $var !== $false_value) {
             if ($var === null) {
                 return null;
@@ -119,6 +123,10 @@ class DataFilter
         mixed $false_value,
     ): bool
     {
+        if (is_bool($var)) {
+            return $var;
+        }
+
         if ($var !== $true_value && $var !== $false_value) {
             throw new WrongType('boolean by values', $var);
         }
