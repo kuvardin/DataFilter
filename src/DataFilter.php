@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Kuvardin\DataFilter;
 
+use DateTimeImmutable;
+use Exception;
 use Kuvardin\DataFilter\Exceptions\WrongType;
 use Kuvardin\DataFilter\Exceptions\UnknownField;
-use DateTime;
 use DateTimeZone;
 
 /**
@@ -251,18 +252,22 @@ class DataFilter
         mixed $var,
         string $format = null,
         DateTimeZone $timezone = null,
-    ): DateTime
+    ): DateTimeImmutable
     {
         $result = null;
 
-        if (is_string($var)) {
-            if ($var !== '' && $var !== '0' && $var !== 'now') {
-                $result = $format === null
-                    ? new DateTime($var, $timezone)
-                    : DateTime::createFromFormat($format, $var);
+        try {
+            if (is_string($var)) {
+                if ($var !== '' && $var !== '0' && $var !== 'now') {
+                    $result = $format === null
+                        ? new DateTimeImmutable($var, $timezone)
+                        : DateTimeImmutable::createFromFormat($format, $var);
+                }
+            } elseif ($format === null && is_int($var)) {
+                $result = new DateTimeImmutable('@' . $var, $timezone);
             }
-        } elseif ($format === null && is_int($var)) {
-            $result = new DateTime('@' . $var, $timezone);
+        } catch (Exception) {
+
         }
 
         if ($result === null) {
@@ -283,7 +288,7 @@ class DataFilter
         mixed $var,
         string $format = null,
         DateTimeZone $timezone = null,
-    ): ?DateTime
+    ): ?DateTimeImmutable
     {
         if ($var === null || $var === '' || $var === '0' || $var === 0) {
             return null;
