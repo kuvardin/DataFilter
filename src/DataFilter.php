@@ -262,6 +262,13 @@ class DataFilter
                     $result = $format === null
                         ? new DateTimeImmutable($var, $timezone)
                         : DateTimeImmutable::createFromFormat($format, $var);
+
+                    if ($result === false) {
+                        throw new WrongType(
+                            $format === null ? 'datetime' : "datetime with format $format",
+                            $var,
+                        );
+                    }
                 }
             } elseif ($format === null && is_int($var)) {
                 $result = new DateTimeImmutable('@' . $var, $timezone);
