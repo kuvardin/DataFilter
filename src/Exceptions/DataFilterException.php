@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Kuvardin\DataFilter\Exceptions;
 
-use Exception;
+use RuntimeException;
 
-class DataFilterException extends Exception
+class DataFilterException extends RuntimeException
 {
 
 }

@@ -28,7 +28,7 @@ class DataFilter
     public static function requireInt(
         mixed $var,
         bool $non_zero = false,
-        bool $positive = null,
+        ?bool $positive = null,
     ): int
     {
         $result = self::getInt($var, $non_zero, $positive);
@@ -43,7 +43,7 @@ class DataFilter
     public static function getInt(
         mixed $var,
         bool $zero_to_null = false,
-        bool $positive = null,
+        ?bool $positive = null,
     ): ?int
     {
         if ($var === null) {
@@ -80,7 +80,10 @@ class DataFilter
     /**
      * @throws WrongType
      */
-    public static function requireIntZeroToNull(mixed $var, bool $positive = null): ?int
+    public static function requireIntZeroToNull(
+        mixed $var,
+        ?bool $positive = null,
+    ): ?int
     {
         $result = self::getInt($var, false, $positive);
 
@@ -250,8 +253,8 @@ class DataFilter
      */
     public static function requireDateTime(
         mixed $var,
-        string $format = null,
-        DateTimeZone $timezone = null,
+        ?string $format = null,
+        ?DateTimeZone $timezone = null,
     ): DateTimeImmutable
     {
         $result = null;
@@ -293,8 +296,8 @@ class DataFilter
      */
     public static function getDateTime(
         mixed $var,
-        string $format = null,
-        DateTimeZone $timezone = null,
+        ?string $format = null,
+        ?DateTimeZone $timezone = null,
     ): ?DateTimeImmutable
     {
         if ($var === null || $var === '' || $var === '0' || $var === 0) {
@@ -309,7 +312,7 @@ class DataFilter
      */
     public static function getFloat(
         mixed $var,
-        bool $positive = null,
+        ?bool $positive = null,
     ): ?float
     {
         if ($var === null) {
@@ -324,7 +327,7 @@ class DataFilter
      */
     public static function requireFloat(
         mixed $var,
-        bool $positive = null,
+        ?bool $positive = null,
     ): float
     {
         if (is_int($var) || is_float($var) || (is_string($var) && is_numeric($var))) {
