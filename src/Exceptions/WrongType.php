@@ -13,7 +13,7 @@ class WrongType extends DataFilterException
     public function __construct(
         protected string $expected_type,
         protected mixed $received_value,
-        Throwable $previous = null,
+        ?Throwable $previous = null,
     )
     {
         $this->received_type = is_object($this->received_value)
