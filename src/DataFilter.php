@@ -280,7 +280,7 @@ class DataFilter
 
         }
 
-        if ($result === null) {
+        if (!($result instanceof DateTimeImmutable)) {
             throw new WrongType($format === null ? 'datetime string' : 'datetime (int or string)', $var);
         }
 
