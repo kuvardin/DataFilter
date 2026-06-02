@@ -189,7 +189,7 @@ class DataFilter
      */
     public static function filterString(string $var): string
     {
-        return trim(preg_replace("/[  \t]+/u", ' ', $var));
+        return trim(preg_replace("/[  \u{2009}\t]+/u", ' ', $var));
     }
 
     /**
